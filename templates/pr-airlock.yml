@@ -1,0 +1,57 @@
+preset: lenient
+
+override:
+  label: "airlock:override"
+
+pull_requests:
+  require_issue_link: false
+  require_tests_for_code_changes: false
+  require_scope_for_large_prs: false
+  require_risk_note: false
+  require_human_ack: false
+  source_paths:
+    - "src/**"
+    - "lib/**"
+    - "app/**"
+    - "packages/**"
+  test_paths:
+    - "test/**"
+    - "tests/**"
+    - "__tests__/**"
+    - "spec/**"
+    - "**/*.test.*"
+    - "**/*.spec.*"
+  docs_paths:
+    - "docs/**"
+    - "**/*.md"
+    - "**/*.mdx"
+
+issues:
+  require_structured_bug_fields: false
+  bug_form_ids:
+    - "bug_report"
+  required_bug_field_ids:
+    - "reproduction"
+    - "expected"
+    - "actual"
+    - "version"
+
+large_pr:
+  files: 30
+  lines: 1000
+  exclude:
+    - "**/*lock*"
+    - "**/dist/**"
+    - "**/vendor/**"
+    - "**/*.generated.*"
+    - "**/*.min.*"
+    - "**/fixtures/**"
+
+labels:
+  missing_issue_link: "needs-issue-link"
+  missing_tests: "needs-tests"
+  missing_repro: "needs-repro"
+  missing_scope: "needs-scope"
+  missing_risk_note: "needs-risk-note"
+  needs_human_ack: "needs-human-review"
+  ready: "ready-for-review"

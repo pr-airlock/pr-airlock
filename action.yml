@@ -1,0 +1,18 @@
+name: "pr-airlock"
+description: "Config-only intake policy checks for GitHub PRs and issues."
+author: "pr-airlock contributors"
+branding:
+  icon: "shield"
+  color: "gray-dark"
+inputs:
+  config:
+    description: "Path to the pr-airlock YAML config in the base repository."
+    required: false
+    default: ".github/pr-airlock.yml"
+  token:
+    description: "GitHub token used to read metadata and update labels/comments."
+    required: false
+    default: "${{ github.token }}"
+runs:
+  using: "node20"
+  main: "dist/index.js"

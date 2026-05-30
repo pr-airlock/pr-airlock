@@ -1,0 +1,7 @@
+preset: recommended
+
+pull_requests:
+  require_scope_for_large_prs: true
+
+issues:
+  require_structured_bug_fields: true

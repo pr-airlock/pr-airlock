@@ -1,0 +1,37 @@
+{
+  "name": "pr-airlock",
+  "version": "0.1.0",
+  "description": "Config-only intake policy checks for GitHub PRs and issues.",
+  "private": false,
+  "type": "module",
+  "main": "dist/index.js",
+  "bin": {
+    "pr-airlock": "dist/index.js"
+  },
+  "scripts": {
+    "build": "tsc --noEmit && ncc build src/index.ts -o dist --source-map --license licenses.txt",
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit"
+  },
+  "keywords": [
+    "github-action",
+    "pull-requests",
+    "issue-triage",
+    "maintainer-tools",
+    "policy-as-code",
+    "open-source"
+  ],
+  "author": "pr-airlock contributors",
+  "license": "MIT",
+  "dependencies": {
+    "@actions/core": "3.0.1",
+    "@actions/github": "9.1.1",
+    "yaml": "2.9.0"
+  },
+  "devDependencies": {
+    "@types/node": "22.15.29",
+    "@vercel/ncc": "0.38.3",
+    "typescript": "5.8.3",
+    "vitest": "3.1.4"
+  }
+}
