@@ -28,4 +28,13 @@ pull_requests:
     expect(config.pull_requests.require_issue_link).toBe(false);
     expect(config.pull_requests.require_tests_for_code_changes).toBe(true);
   });
+
+  it("rejects invalid field types with a useful error", () => {
+    expect(() =>
+      loadConfig(`
+pull_requests:
+  require_issue_link: "yes"
+`)
+    ).toThrow("pull_requests.require_issue_link");
+  });
 });

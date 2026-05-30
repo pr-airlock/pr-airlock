@@ -56,4 +56,24 @@ large_pr:
     expect(results.find((result) => result.id === "issue-link")?.passed).toBe(false);
     expect(results.find((result) => result.id === "tests")?.passed).toBe(false);
   });
+
+  it("does not accept unchecked human acknowledgement template text", () => {
+    const config = loadConfig("preset: strict");
+    const results = evaluatePullRequest({
+      title: "Fixes #1",
+      body: "- [ ] I reviewed and understand every change in this PR.",
+      files: []
+    }, config);
+    expect(results.find((result) => result.id === "human-ack")?.passed).toBe(false);
+  });
+
+  it("accepts checked human acknowledgement", () => {
+    const config = loadConfig("preset: strict");
+    const results = evaluatePullRequest({
+      title: "Fixes #1",
+      body: "- [x] I reviewed and understand every change in this PR.\n\nRisk: low.",
+      files: []
+    }, config);
+    expect(results.find((result) => result.id === "human-ack")?.passed).toBe(true);
+  });
 });

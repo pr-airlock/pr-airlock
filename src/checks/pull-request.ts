@@ -93,6 +93,8 @@ function checkHumanAck(body: string, config: AirlockConfig): CheckResult {
     label: config.labels.needs_human_ack,
     title: "Human acknowledgement",
     details: "Confirm that you reviewed and understand every change in this PR.",
-    passed: /reviewed and understand every change|not submitting unreviewed|understand this change/i.test(body)
+    passed:
+      /^\s*-\s*\[[xX]\]\s+.*(reviewed and understand every change|not submitting unreviewed|understand this change)/im.test(body) ||
+      /^\s*\[[xX]\]\s+.*(reviewed and understand every change|not submitting unreviewed|understand this change)/im.test(body)
   };
 }

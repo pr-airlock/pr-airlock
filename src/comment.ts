@@ -2,7 +2,7 @@ import type { Evaluation } from "./types.js";
 
 export const COMMENT_MARKER = "<!-- pr-airlock:status -->";
 
-export function renderComment(evaluation: Evaluation): string {
+export function renderComment(evaluation: Evaluation, overrideLabel: string): string {
   const failing = evaluation.results.filter((result) => !result.passed);
   if (failing.length === 0) {
     return `${COMMENT_MARKER}
@@ -20,6 +20,6 @@ This ${evaluation.kind === "pull_request" ? "PR" : "issue"} is not ready for mai
 
 ${rows}
 
-A maintainer can override this gate by applying the \`airlock:override\` label.
+A maintainer can override this gate by applying the \`${overrideLabel}\` label.
 `;
 }

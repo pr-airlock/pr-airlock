@@ -113,7 +113,7 @@ async function publishEvaluation(
   }
 
   await syncLabels(octokit, owner, repo, evaluation.number, managedLabels, failingLabels);
-  await upsertComment(octokit, owner, repo, evaluation.number, renderComment(evaluation));
+  await upsertComment(octokit, owner, repo, evaluation.number, renderComment(evaluation, config.override.label));
 }
 
 async function syncLabels(

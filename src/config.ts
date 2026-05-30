@@ -76,9 +76,104 @@ const strictOverrides: Partial<AirlockConfig> = {
 
 export function loadConfig(source: string | undefined): AirlockConfig {
   const parsed = source?.trim() ? YAML.parse(source) ?? {} : {};
+  validateRawConfig(parsed);
   const preset = normalizePreset(parsed.preset);
   const presetConfig = applyPreset(defaultConfig, preset);
   return mergeConfig(presetConfig, parsed);
+}
+
+function validateRawConfig(value: unknown): asserts value is Partial<AirlockConfig> {
+  if (!isRecord(value)) {
+    throw new Error("pr-airlock config must be a YAML object.");
+  }
+
+  const preset = value.preset;
+  if (preset !== undefined && preset !== "lenient" && preset !== "recommended" && preset !== "strict") {
+    throw new Error("pr-airlock config field `preset` must be one of: lenient, recommended, strict.");
+  }
+
+  validateObject(value.override, "override");
+  validateObject(value.pull_requests, "pull_requests");
+  validateObject(value.issues, "issues");
+  validateObject(value.large_pr, "large_pr");
+  validateObject(value.labels, "labels");
+  validateObject(value.comments, "comments");
+
+  validateBoolean(value.pull_requests, "pull_requests", "require_issue_link");
+  validateBoolean(value.pull_requests, "pull_requests", "require_tests_for_code_changes");
+  validateBoolean(value.pull_requests, "pull_requests", "require_scope_for_large_prs");
+  validateBoolean(value.pull_requests, "pull_requests", "require_risk_note");
+  validateBoolean(value.pull_requests, "pull_requests", "require_human_ack");
+  validateStringArray(value.pull_requests, "pull_requests", "source_paths");
+  validateStringArray(value.pull_requests, "pull_requests", "test_paths");
+  validateStringArray(value.pull_requests, "pull_requests", "docs_paths");
+
+  validateBoolean(value.issues, "issues", "require_structured_bug_fields");
+  validateStringArray(value.issues, "issues", "bug_form_ids");
+  validateStringArray(value.issues, "issues", "required_bug_field_ids");
+
+  validateNumber(value.large_pr, "large_pr", "files");
+  validateNumber(value.large_pr, "large_pr", "lines");
+  validateStringArray(value.large_pr, "large_pr", "exclude");
+
+  validateString(value.override, "override", "label");
+  for (const key of [
+    "missing_issue_link",
+    "missing_tests",
+    "missing_repro",
+    "missing_scope",
+    "missing_risk_note",
+    "needs_human_ack",
+    "ready"
+  ]) {
+    validateString(value.labels, "labels", key);
+  }
+}
+
+function validateObject(value: unknown, path: string): void {
+  if (value !== undefined && !isRecord(value)) {
+    throw new Error(`pr-airlock config field \`${path}\` must be an object.`);
+  }
+}
+
+function validateBoolean(parent: unknown, path: string, key: string): void {
+  if (!isRecord(parent) || parent[key] === undefined) {
+    return;
+  }
+  if (typeof parent[key] !== "boolean") {
+    throw new Error(`pr-airlock config field \`${path}.${key}\` must be a boolean.`);
+  }
+}
+
+function validateNumber(parent: unknown, path: string, key: string): void {
+  if (!isRecord(parent) || parent[key] === undefined) {
+    return;
+  }
+  if (typeof parent[key] !== "number" || !Number.isFinite(parent[key]) || parent[key] < 0) {
+    throw new Error(`pr-airlock config field \`${path}.${key}\` must be a non-negative number.`);
+  }
+}
+
+function validateString(parent: unknown, path: string, key: string): void {
+  if (!isRecord(parent) || parent[key] === undefined) {
+    return;
+  }
+  if (typeof parent[key] !== "string" || parent[key].trim() === "") {
+    throw new Error(`pr-airlock config field \`${path}.${key}\` must be a non-empty string.`);
+  }
+}
+
+function validateStringArray(parent: unknown, path: string, key: string): void {
+  if (!isRecord(parent) || parent[key] === undefined) {
+    return;
+  }
+  if (!Array.isArray(parent[key]) || !parent[key].every((item) => typeof item === "string" && item.trim() !== "")) {
+    throw new Error(`pr-airlock config field \`${path}.${key}\` must be an array of non-empty strings.`);
+  }
+}
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === "object" && value !== null && !Array.isArray(value);
 }
 
 function normalizePreset(value: unknown): PresetName {
