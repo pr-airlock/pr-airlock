@@ -45268,18 +45268,19 @@ async function run() {
     info("pr-airlock only handles pull_request_target and issues events.");
 }
 async function loadRemoteConfig(octokit, owner, repo, path) {
+    let content;
     try {
         const response = await octokit.rest.repos.getContent({ owner, repo, path });
         if (Array.isArray(response.data) || response.data.type !== "file") {
             return loadConfig(undefined);
         }
-        const content = Buffer.from(response.data.content, "base64").toString("utf8");
-        return loadConfig(content);
+        content = Buffer.from(response.data.content, "base64").toString("utf8");
     }
     catch (error) {
         info(`No pr-airlock config found at ${path}; using lenient silent defaults.`);
         return loadConfig(undefined);
     }
+    return loadConfig(content);
 }
 async function listPullRequestFiles(octokit, owner, repo, pull_number) {
     const files = await octokit.paginate(octokit.rest.pulls.listFiles, {
