@@ -1,5 +1,7 @@
 # pr-airlock
 
+[![Test](https://github.com/pr-airlock/pr-airlock/actions/workflows/test.yml/badge.svg)](https://github.com/pr-airlock/pr-airlock/actions/workflows/test.yml)
+
 Config-only intake policy for GitHub pull requests and issue forms.
 
 `pr-airlock` helps maintainers get reviewable contributions through a clear intake contract. It checks the metadata contributors already provide, leaves one friendly sticky comment when something is missing, and keeps labels in sync as the PR or issue is updated.
